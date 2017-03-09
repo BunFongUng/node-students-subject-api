@@ -11,6 +11,8 @@ const { Subject } = require('./models/subject');
 
 const studentRouters = require('./routes/student'); 
 
+const subjectRouters = require('./routes//subject');
+
 
 const PORT = process.env.PORT || 4444;
 
@@ -32,6 +34,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/students', studentRouters);
+
+app.use('/subjects', subjectRouters);
 
 
 app.listen(PORT, () => {

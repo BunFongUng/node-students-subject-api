@@ -3,6 +3,7 @@ const { ObjectID } = require('mongodb');
 
 const { Student } = require('../models/student');
 
+
 module.exports = {
 	// get students list
 	getStudentList: (req, res) => {
@@ -91,6 +92,39 @@ module.exports = {
 			res.status(400).send({
 				status: 'error',
 				message: `Unable to delete student by id, ${err}`
+			});
+		});
+	},
+	updateStudentById: (req, res) => {
+		let id = req.params.id;
+		let body = _.pick(req.body, ['firstName', 'lastName', 'gender', 'dateOfBirth', 'phoneNumber', 'email']);
+
+		if(!ObjectID.isValid(id)) {
+			return res.status(400).send({
+				status: 'error',
+				message: 'Invalid student id.'
+			});
+		}
+
+		body.updatedAt = new Date().toString();
+
+		Student.findByIdAndUpdate(id, { $set: body }, { new : true }).then((student) => {
+			if(!student) {
+				return res.status(404).send({
+					status: 'error',
+					message: 'Student not found!'
+				});
+			}
+
+			res.send({
+				status: 'success',
+				data: student
+			});
+
+		}).catch((err) => {
+			res.status(400).send({
+				status: 'error',
+				message: 'Unable to update student by id.'
 			});
 		});
 	}
